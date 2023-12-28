@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    
+    <title>Chatbot</title> 
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"/>
+</head>
+<body>
+
+<div class="main--content">
+
+    <!----------------------- Dashboard ----------------------->
+    <div class="gap">
+    <div class="dashboard">
+        <div class="dashboard--title">
+            <h2>DashBoard</h2>
+            <p>Welcome to the DashBoard</p>
+        </div>
+    
+
+    <!----------------------- Stats ----------------------->
+
+    <div class="stats">
+
+        <div class="stats-single">
+            <div>
+                <h1>190</h1>
+                <span>Total Products</span>
+            </div>
+            <div>
+
+            </div>
+        </div>
+
+        <div class="stats-single">
+            <div>
+                <h1>4146</h1>
+                <span>No. of Questions Asked</span>
+            </div>
+            <div>
+
+            </div>
+        </div>
+
+        <div class="stats-single">
+            <div>
+                <h1>3.0</h1>
+                <span>Average Rating</span>
+            </div>
+            <div>
+
+            </div>
+        </div>
+
+        <div class="stats-single">
+            <div>
+                <h1>20</h1>
+                <span>Average Reviews </span>
+            </div>
+            <div>
+
+            </div>
+        </div>
+
+        <div class="stats-single">
+            <div>
+                <h1>56315</h1>
+                <span>Average Price</span>
+            </div>
+            <div>
+
+            </div>
+        </div>   
+    </div>
+</div>
+</div>
+
+
+    <!--      ChatBot         -->
+    <div class="container-fluid">
+        <h1>ChatBot</h1>
+        <p>Version 3.5</p>
+        <div class="row">		
+            <div class="card">
+                <div class="card-header msg_head">
+                    <div class="d-flex bd-highlight">
+                        <img src="https://t4.ftcdn.net/jpg/05/63/41/23/360_F_563412346_mSIH5YHtbVHZKcPUbmYDD5leIW5HcshQ.jpg" class="rounded-circle user_img">
+                        <div class="user_info">
+                            <span>CATGPT</span>
+                            <p>How can I help you today?</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="messageFormeight" class="card-body msg_card_body">
+                    <!-- Responses will be displayed here -->
+                </div>
+                <div class="card-footer">
+                    <form id="messageArea" class="input-group" onsubmit="event.preventDefault(); sendMessage();">
+                        <input type="text" id="text" name="msg" placeholder="Message CatGPT..." autocomplete="off" class="form-control type_msg" required/>
+                        <div class="input-group-append">
+                            <button type="submit" id="send" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
+                        </div>
+                    </form>                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!----------------------- Top Products ----------------------->
+
+    <div class="table">
+        <h1>Top Products</h1>
+        <p>Our Suggestions</p>
+    </div>
+    
+    <div class="productsbox">
+    
+        <div class="top_products table-head">
+            <div class="product_attributes">
+                <h5>Product</h5>
+            </div>
+    
+            <div class="product_attributes">
+                <h5>Rating</h5>
+            </div>
+    
+            <div class="product_attributes">
+                <h5>Price in Rs.</h5>
+            </div>
+        </div>
+    
+        {% for index, row in top_rated_products.iterrows() %}
+            <div class="top_products">
+                <div class="product_attributes">
+                    <!-- Add a clickable hyperlink to the product name -->
+                    <h6><a href="{{ row['Product URL'] }}" target="_blank">{{ row['Product Name'] }}</a></h6>
+                </div>
+    
+                <div class="product_attributes">
+                    <h6>{{ row['Product Rating'] }}</h6>
+                </div>
+    
+                <div class="product_attributes">
+                    <h6>{{ row['Product Price'] }}</h6>
+                </div>
+            </div>
+        {% endfor %}
+    
+    </div>
+
+
+
+
+
+    <!-- Java  -->
+        <script>
+            function sendMessage() {
+                var userMessage = document.getElementById("text").value;
+                // Send user message to the server
+                fetch('/user-response', {
+                    method: 'POST',
+                    body: new URLSearchParams({'user_message': userMessage}),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display bot response
+                    var botResponse = data.bot_response;
+                    var messageForm = document.getElementById("messageFormeight");
+                    var newMessage = document.createElement("p");
+                    newMessage.innerHTML = `<strong>You:</strong> ${userMessage}<br><strong>CatGPT:</strong> ${botResponse}`;
+                    messageForm.appendChild(newMessage);
+                    // Clear the input field
+                    document.getElementById("text").value = "";
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>
+    </div>
+</body>
+</html>
